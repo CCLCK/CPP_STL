@@ -9,13 +9,31 @@ namespace ck
 	class string
 	{
 	public:
-		string()
-			:_str(new char[1])//为什么这里要设置1个  就是为了放'\0' 
-			//不然size()就会解引用空指针
-			, _size(0)
-			, _capacity(0)
+		//string()
+		//	:_str(new char[1])//为什么这里要设置1个  就是为了放'\0' 
+		//	//不然size()就会解引用空指针
+		//	, _size(0)
+		//	, _capacity(0)
+		//{
+		//	*_str = '\0';
+		//}
+		typedef char* iterator;
+		typedef const char* const_iterator;
+		iterator begin()
 		{
-			*_str = '\0';
+			return _str;
+		}
+		iterator end()
+		{
+			return _str + _size;
+		}	
+		const_iterator begin() const//注意这个返回值  常对象的返回值常常设置为可读
+		{
+			return _str;
+		}
+		const_iterator end() const
+		{
+			return _str + _size;
 		}
 		void swap(string& s)
 		{
@@ -24,6 +42,8 @@ namespace ck
 			::swap(_capacity, s._capacity);
 		}
 		string& operator=(string s)//返回的不是void 而是string&
+			//这里的string为什么不能用const修饰保护 因为实现是借助了交换
+			//如果交换const常量不就是修改const 所以会报错
 		{
 			swap(s);
 			return *this;
@@ -34,7 +54,7 @@ namespace ck
 			string tmp(s._str);
 			swap(tmp);
 		}
-		string(char* str)
+		string(char* str="")
 			:_size(strlen(str))
 			, _capacity(_size)//初始化为_size
 		{
@@ -48,12 +68,15 @@ namespace ck
 			_capacity = 0;
 			_str = nullptr;
 		}
-		size_t size()
-		{
-			return strlen(_str);
-		}
+
 		char& operator[](size_t pos)
 		{
+			assert(pos < _size);
+			return _str[pos];
+		}
+		const char& operator[](size_t pos)const
+		{
+			assert(pos < _size);
 			return _str[pos];
 		}
 		void resize(size_t n,char ch='\0')
@@ -93,6 +116,97 @@ namespace ck
 		const char* c_str()
 		{
 			return _str;
+		}
+		void push_back(char ch)
+		{
+			/*if (_size >= _capacity)
+			{
+				size_t newcapacity = (_capacity == 0 ? 4 : 2 * _capacity);
+				reserve(newcapacity);
+				_capacity = newcapacity;
+			}
+			_str[_size] = ch; _size++;
+			_str[_size] = '\0'; */
+			insert(_size, ch);
+		}
+		void append(char* str)
+		{	
+			/*int len = strlen(str);
+			if (len + _size > _capacity)
+			{
+				reserve(len + _size);
+			}
+			strcpy((_size + _str), str);
+			_size = _size + len;*/
+			insert(_size, str);
+		}
+
+		size_t size()
+		{
+			return _size;
+		}
+		size_t size() const
+		{
+			return _size;
+		}
+		size_t capacity()
+		{
+			return _capacity;
+		}	
+		void clear()
+		{
+			_str[0] = '\0';
+			_size = 0;
+		}
+		string& insert(size_t pos, char ch)
+		{
+			assert(pos >= 0 && pos <= _size);
+			if (_size + 1 > _capacity)
+			{
+				reserve(_size + 1);
+			}
+			
+			for (size_t i = _size+1; i > pos; i--)//这是一种新的方法处理
+				//或者把i>pos 写成(int)i>(int)pos 也行 因为问题的本质是size_t没有负数 而-1就是INT_MAX*2+1
+			{
+				_str[i] = _str[i-1];
+			}
+			_str[pos] = ch;
+			_size++;
+			return *this;
+		}
+		
+		string& insert(size_t pos, const char* str)
+		{
+			assert(pos >= 0 && pos <= _size);
+			int len = strlen(str);
+			if (len == 0)
+			{
+				return *this;//防止产生bug
+			}
+			if (_size + len > _capacity)
+			{
+				reserve(_size + len);
+			}
+			for (size_t i = _size + len; i >= pos+len; i--)
+			{
+				//能不能写成for (size_t i = _size + len; i-len >= pos; i--)
+				//绝对不行啊  i-len会出现bug 比如i-len==0>=pos(0) 再执行一次i就变成-1（size_t全1最大）
+				//就导致了死循环  而这里i>=pos+len就不会有这种情况 因为i不会为0  前面对len==0的情况进行了处理
+				_str[i] = _str[i - len];
+			}
+			int j = 0;
+			for (int i = pos; j < len; i++)
+			{
+				_str[i] = str[j];
+				j++;
+			}
+			_size += len;
+			return *this;
+		}
+		string& erase(size_t pos, size_t len=npos)
+		{
+
 		}
 	private:
 		char* _str;
