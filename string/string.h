@@ -204,9 +204,39 @@ namespace ck
 			_size += len;
 			return *this;
 		}
-		string& erase(size_t pos, size_t len=npos)
+		string& erase(size_t pos, size_t len=npos)//删到pos+len-1
 		{
-
+			assert(pos >= 0 && pos < _size);
+			if (len == 0)
+			{
+				return *this;
+			}
+			if (len==npos||pos + len >= _size)//删干净
+			{
+				_str[pos] = '\0';
+				_size = pos+1;
+			}
+			else
+			{
+				strcpy(_str + pos, _str + pos + len);
+				_size -= len;
+			}
+			return *this;
+		}
+		string& operator+=(const char ch)
+		{
+			push_back(ch);
+			return *this;
+		}
+		string& operator+=(char* str)
+		{
+			append(str);
+			return *this;
+		}
+		string& operator+=(string& s)
+		{
+			append(s._str);
+			return *this;
 		}
 	private:
 		char* _str;
@@ -216,7 +246,120 @@ namespace ck
 	};
 	const size_t string::npos = -1;
 	//这个东西必须要加上类型size_t，必须在命名空间内 不然会造成意义不明确
+	string operator+(const string&s1, char ch)
+	{
+	//存在深拷贝 尽量少用
+	string ret = s1;
+	ret += ch;
+	return ret;
+	}
+	string operator+(const string&s1, char* str)
+	{
+	string ret = s1;//开一块临时空间
+	ret += str;//在这块临时空间处理
+	return ret;
+	}
+	ostream& operator<<(ostream& out, const string& s)//这个更加要注意返回值和参数类型
+	{
+		for (size_t i = 0; i < s.size(); ++i)
+		{
+			out << s[i];
+		}
+		return out;//连续使用的时候必须有这个返回值
+	}
+	istream& operator>>(istream& in,string& s)
+	{
+		char ch =in.get();//这里不用getchar，用流对象
+		//in>>ch这个不行 因为in本身碰到空格或者换行就停止了
+		while (ch != ' '&& ch != '\n')
+		{
+			s += ch;
+			ch=in.get();
+		}
+		return in;
+	}
+	istream& getline(istream& in, string& s)
+	{
+		char ch = in.get();//这里不用getchar，用流对象
+		//in>>ch这个不行 因为in本身碰到空格或者换行就停止了
+		while (ch != '\n')
+		{
+			s += ch;
+			ch = in.get();
+		}
+		return in;
+	}
+	//> =
+	bool operator>(const string& s1, const string& s2)
+	{
+		int len1 = s1.size();
+		int len2 = s2.size();
+		int i = 0;
+		while (i < len1&&i < len2)
+		{
+			if (s1[i]<s2[i])
+			{
+				return false;
+			}
+			else if (s1[i]>s2[i])
+			{
+				return true;
+			}
+			else
+			{
+				;
+			}
+			i++;
+		}
+		if (i != len1&&i == len2)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	bool operator==(const string&s1, const string& s2)
+	{
+		int len1 = s1.size();
+		int len2 = s2.size();
+		int i = 0;
+		while (i < len1&&i < len2)
+		{
+			if (s1[i] != s2[i])
+			{
+				return false;
+			}
+			i++;
+		}
+		if (i == len1&&i == len2)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	inline bool operator>=(const string&s1, const string& s2)
+	{
+		return ((s1 > s2) || (s1 == s2));
+	}
+	inline bool operator<=(const string&s1, const string& s2)
+	{
+		return !(s1 > s2);
+	}
+	inline bool operator!=(const string&s1, const string& s2)
+	{
+		return !(s1 == s2);
+	}
+	inline bool operator<(const string&s1, const string& s2)
+	{
+		return !(s1>=s2);
+	}
 }
+
 
 
 
