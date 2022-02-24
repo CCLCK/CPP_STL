@@ -50,7 +50,33 @@ int main()
 	s8.push_back('x');
 	s8.append(" iloveyou");
 	cout << s8.c_str() << endl;
+	s8 = "abcd";
+	s8.erase(1,0);
+	cout << s8.c_str() << endl;
 
+	s8.clear();
+	s8 += 'i';
+	s8 += " love ";
+	s8 += ck::string("you");
+	cout << s8.c_str() << endl;
+
+	s8.clear();
+
+	s8 = s8 + "hello";
+	s8 = s8 + ' ';
+	//cout << s8.c_str() << endl;
+	cout << s8 << endl;
+
+	//s8.clear();
+	//getline(cin, s8);
+	//cout << s8 << endl;
+
+	s8.clear();
+	s8 = "abcde";
+	ck::string s9("abcdef");
+	//cout << (s8 == s9) << endl;
+	//cout << (s8 > s9) << endl;
+	cout << (s8 >= s9) << endl;
 
 	return 0;
 }
