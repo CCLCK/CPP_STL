@@ -140,7 +140,26 @@ namespace ck
 			_size = _size + len;*/
 			insert(_size, str);
 		}
-
+		size_t find(char c, size_t pos = 0) const
+		{
+			for (int i = pos; i < _size; i++)
+			{
+				if (_str[i] == c)
+				{
+					return i;
+				}
+			}
+			return npos;
+		}
+		size_t find(const char* s, size_t pos = 0)
+		{
+			char* ret=strstr(_str, s);
+			if (ret == nullptr)
+			{
+				return npos;
+			}
+			return ret - _str;
+		}
 		size_t size()
 		{
 			return _size;
@@ -359,9 +378,3 @@ namespace ck
 		return !(s1>=s2);
 	}
 }
-
-
-
-
-
-
