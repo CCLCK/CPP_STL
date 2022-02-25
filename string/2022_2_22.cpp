@@ -77,6 +77,8 @@ int main()
 	//cout << (s8 == s9) << endl;
 	//cout << (s8 > s9) << endl;
 	cout << (s8 >= s9) << endl;
+	cout << s8.find('a', 1) << endl;
+	cout << s8.find("abcdefg") << endl;
 
 	return 0;
 }
