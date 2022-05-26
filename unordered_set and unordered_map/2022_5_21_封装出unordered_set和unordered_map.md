@@ -209,13 +209,15 @@ struct HashNode
 
 ## 🍬获取key
 
-> **获取key后可以查找也可以算出桶号**
+**<font color=red>明确unordered_map是KV结构，unordered_set是K模型的结构。</font>**
 
-封装前哈希结点的类型是pair<K,V>，现在是T。
+> **获取key后可以做很多事情，比如查找和算出桶号**
+
+封装前哈希结点的类型是pair<K,V>，现在的类型是T。
 
 > pair<K,V>kv , 可以通过kv.first来获取key。
 >
-> 下面默认int、double、string等类型的key就是其本身。
+> 默认int、double、string等类型的key就是本身。（也可以自定义）
 
 类型T既可能是pair也可能是一个int类型等等，那应该怎么得到类型T的key？**借助模板+仿函数**。
 
@@ -235,7 +237,7 @@ struct HashNode
 
 之后把所有与.first有关的都用模板实例化的kot来获取key
 
-## 🍬自定义哈希规则
+## 🍬实现自定义哈希规则
 
 去掉哈希表模板参数里哈希函数的默认值  在unordered_set/unordered_map加上第三个模板参数Hash自定义哈希规则
 
@@ -260,9 +262,11 @@ class unordered_map{
 };
 ```
 
+解释：实例化对象时便可以传入模板参数达到自自定义哈希规则的效果。
+
 ![image-20220526163618308](https://pic-1304888003.cos.ap-guangzhou.myqcloud.com/img/image-20220526163618308.png)
 
-> 所以我们使用时可以自己写一个类传入达到自定义哈希规则的效果。
+
 
 ## 🍬哈希表模板参数解释
 
@@ -276,9 +280,9 @@ template<class K, class T,  class KeyOfT, class Hash>
 
 第二个参数T：哈希表结点存储的数据类型。比如int，double，pair,string等。
 
-第三个参数KeyOfT：拿到结点数据的key。
+第三个参数KeyOfT：拿到T类型(结点数据类型)的key。
 
-第四个参数Hash：表示哈希函数类，也即哈希规则。
+第四个参数Hash：表示使用的哈希函数
 
 > ```c++
 > //哈希函数
@@ -304,7 +308,7 @@ template<class K, class T,  class KeyOfT, class Hash>
 > 	}
 > };
 > ```
-> HashFunc（Kot(T)） 取出这个类型的key的映射值
+> HashFunc（kot(T)） 取出这个类型的key的映射值
 
 ## 🍬迭代器
 
